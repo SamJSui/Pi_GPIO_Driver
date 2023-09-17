@@ -13,7 +13,7 @@
 <div align="center">
     <h3 align="center">Raspberry Pi Kernel Module</h3>
     <p align="center">
-        SamJSui's Raspberry Pi kernel module repository (internally, named suimodule) is a Linux kernel module that provides file IO to userspace.
+        SamJSui's Raspberry Pi kernel module repository (internally, named suimodule) is a Linux kernel module that registers a character device driver. The module allocates a kernel buffer to allow reading and writing from userspace.
         <!-- <br />
         <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
         <br />
@@ -56,11 +56,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-
+**suimodule** is a personal project of mine to better understand how the Linux kernel works and learn how to program systems software, such as drivers and firmware.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 
@@ -73,25 +71,30 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
+Tested Specifications:
+- Raspberry Pi 400 
+  - or other devices that run Linux
+- Linux Kernel 6.1.21-v8+ 
+
 ### Prerequisites
 
-* [Nvidia CUDA Toolkit](https://developer.nvidia.com/cuda-downloads)
+`sudo apt update`
+
+`sudo apt upgrade`
+
+`sudo apt-get install raspberrypi-kernel-headers`
+- or [Linux headers](https://www.tecmint.com/install-kernel-headers-in-ubuntu-and-debian/) for your device
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+Clone the repository
+- `git clone https://github.com/SamJSui/Pi_Kernel_Module`
+
+Change current directory to the cloned module directory
+- `cd Pi_Kernel_Module/suimodule`
+
+Kernel compilation 
+- `make`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -100,10 +103,59 @@
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Module insertion
+- `sudo insmod suimodule.ko`
+Check kernel log buffer
+- `dmesg`
+```
+[384.534813] suimodule device number: major=236 minor=0
+[384.535215] suimodule successfully loaded
+```
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Example file
 
+*Intended to be ran as root*
+
+This file reads the device file from userspace and prints its contents to stdout
+
+```c
+/* examples/file_io.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main() {
+    
+    /* Declare variables */
+    int fd;
+    char buffer[256];
+
+    /* Open file descriptor to device file */
+    fd = open("/dev/suidev", O_RDONLY);
+    
+    /* Copy 256 bytes into buffer */
+    read(fd, buffer, 256);
+
+    /* Print buffer */
+    printf("%s\n", buffer);
+    
+    close(fd);
+    return 0;
+}
+```
+
+Compile C file
+- `gcc -o file_io file_io.c`
+
+Run the executable
+- `./file_io`
+
+`dmesg`
+```
+[1968.969043] suimodule device file successfully opened
+[1968.969236] suimodule device file successfully closed
+```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -111,10 +163,9 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] ProcFS
+- [ ] Interrupt Handling
+- [ ] Workqueue
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -144,7 +195,7 @@ Project Link: [https://github.com/SamJSui/Pi_Kernel_Module](https://github.com/S
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
 [contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[c]: https://img.shields.io/badge/c-white?style=for-the-badge&logo=c&logoColor=044F88
+[c]: https://img.shields.io/badge/c-044F88?style=for-the-badge&logo=c&logoColor=white
 [c-url]: https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 [cpp]: https://img.shields.io/badge/c++-white?style=for-the-badge&logo=cplusplus&logoColor=044F88
 [cpp-url]: https://cplusplus.com/
