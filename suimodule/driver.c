@@ -47,11 +47,6 @@ static int __init suimodule_init(void) {
         goto error_device;
     }
 
-    if ((kernel_buffer = kmalloc(buffer_size, GFP_KERNEL)) == 0) {
-        pr_err("suimodule: Cannot allocate memory in kernel\n");
-        goto error_buffer;
-    } 
-
     strcpy(kernel_buffer, "suimodule: kernel buffer");
 
     /* Greaaat successs :) */
@@ -59,8 +54,6 @@ static int __init suimodule_init(void) {
     return SUCCESS;
 
     /* Error labels */
-    error_buffer:
-        device_destroy(dev_class, dev);
     error_device:
         class_destroy(dev_class);
     error_class:

@@ -20,7 +20,7 @@
 #include <linux/uaccess.h>
 
 static size_t buffer_size = 256;
-static char *kernel_buffer;
+static char kernel_buffer[256];
 
 /**
  * @brief Reads data out of the given buffer
@@ -31,14 +31,14 @@ static char *kernel_buffer;
  * @param offs 
  * @return ssize_t 
  */
-static ssize_t device_read(struct file *file, char *user_buffer, size_t count, loff_t *offs) {
+static ssize_t device_read(struct file *file, char *user_buffer, size_t len, loff_t *offs) {
     int bytes_read, not_copied;
 
     /* Buffer overflow check */
-    bytes_read = min(count, buffer_size);
+    bytes_read = min(len, buffer_size);
 
     /* Read bytes from kernel_buffer to user_buffer */
-    if ((not_copied = copy_to_user(user_buffer, kernel_buffer, buffer_size)) != 0) {
+    if ((not_copied = copy_to_user(user_buffer, kernel_buffer, bytes_read)) != 0) {
         pr_warn("suimodule: %d bytes not read\n", not_copied);
     }
 
@@ -61,7 +61,7 @@ static ssize_t device_write(struct file *file, const char *user_buffer, size_t l
     bytes_read = min(len, buffer_size);
 
     /* Read bytes from kernel_buffer to user_buffer */
-    if ((not_copied = copy_from_user(kernel_buffer, user_buffer, len)) != 0) {
+    if ((not_copied = copy_from_user(kernel_buffer, user_buffer, bytes_read)) != 0) {
         pr_warn("suimodule: %d bytes not read\n", not_copied);
     }
 
