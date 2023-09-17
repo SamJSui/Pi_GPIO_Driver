@@ -16,6 +16,7 @@
 #include "macros.h"
 
 #include <linux/fs.h>
+#include <linux/ioctl.h>
 #include <linux/uaccess.h>
 
 static size_t buffer_size = 256;
