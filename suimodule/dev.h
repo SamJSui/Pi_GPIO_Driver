@@ -9,9 +9,14 @@
  * 
  */
 
+#ifndef SUIMODULE_DEV_H
+#define SUIMODULE_DEV_H
+
 #include <linux/cdev.h>
 #include <linux/device.h>
 
-dev_t dev = 0;
-struct class *dev_class;
-struct cdev cdev;
+static dev_t dev;
+static struct class *dev_class;
+static struct cdev cdev;
+
+#endif // SUIMODULE_DEV_H

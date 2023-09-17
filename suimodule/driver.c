@@ -9,52 +9,72 @@
  * 
  */
 
-#include "dev.h"
 #include "driver.h"
-#include "fops.h"
-#include "macros.h"
 
-/**
- * @brief Constructor to initialize kernel module
- * 
- * @return int 
- */
 static int __init suimodule_init(void) {
-
+    
     /* Allocate device major number */
     if ((alloc_chrdev_region(&dev, 0, 1, DRIVER_NAME)) < 0) {
-        pr_err("Cannot allocate device major number\n");
-        return 1;
+        pr_err("suimodule: Cannot allocate device major number\n");
+        return ERROR;
     }
-    pr_info("suimodule device numbers: Major=%d Minor=%d\n", MAJOR(dev), MINOR(dev));
-
-    /* Device class creation */
-    #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
-        dev_class = class_create(DEVICE_NAME);
-    #else
-        dev_class = class_create(THIS_MODULE, DEVICE_NAME);
-    #endif
-    device_create(dev_class, NULL, MKDEV(MAJOR(dev), 0), NULL, DEVICE_NAME);
+    pr_info("suimodule device number: major=%d minor=%d\n", MAJOR(dev), MINOR(dev));
 
     /* Create cdev struct */
     cdev_init(&cdev, &fops);
 
+    if ((cdev_add(&cdev, dev, 1)) < 0) {
+        pr_err("suimodule: Character device could not be added\n");
+        return ERROR;
+    }
+
+    /* Device class creation */
+    #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
+        if ((dev_class = class_create(CLASS_NAME)) == NULL) {
+            pr_err("suimodule: Cannot create the struct class\n");
+            goto error_class;
+        }
+    #else
+        if ((dev_class = class_create(THIS_MODULE, CLASS_NAME)) == NULL) {
+            pr_err("suimodule: Cannot create the struct class\n");
+            goto error_class;
+        }
+    #endif
+
+    /* Creating device */
+    if (device_create(dev_class, NULL, dev, NULL, DEVICE_NAME) == NULL) {
+        pr_err("suimodule: Cannot create the Device 1\n");
+        goto error_device;
+    }
+
+    if ((kernel_buffer = kmalloc(buffer_size, GFP_KERNEL)) == 0) {
+        pr_err("suimodule: Cannot allocate memory in kernel\n");
+        goto error_buffer;
+    } 
+
+    strcpy(kernel_buffer, "suimodule: kernel buffer");
+
+    /* Greaaat successs :) */
     pr_info("suimodule successfully loaded\n");
-    return 0;
+    return SUCCESS;
+
+    /* Error labels */
+    error_buffer:
+        device_destroy(dev_class, dev);
+    error_device:
+        class_destroy(dev_class);
+    error_class:
+        cdev_del(&cdev);
+        unregister_chrdev_region(dev, 1);
+        return ERROR;
 }
 
-/**
- * @brief Destructor to de-allocate resources
- * 
- */
 static void __exit suimodule_exit(void) {
-
     device_destroy(dev_class, dev);
     class_destroy(dev_class);
     cdev_del(&cdev);
     unregister_chrdev_region(dev, 1);
     pr_info("suimodule successfully removed\n");
-
 }
 
 module_init(suimodule_init);
@@ -62,5 +82,5 @@ module_exit(suimodule_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Sam Sui");
-MODULE_DESCRIPTION("");
+MODULE_DESCRIPTION("Linux kernel module that allocates a character device driver to buffer data on physical memory.");
 MODULE_VERSION("0.1");

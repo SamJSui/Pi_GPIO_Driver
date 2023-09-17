@@ -14,7 +14,9 @@
 
 /* Returns */
 #define SUCCESS 0
-#define ERROR 1
+#define ERROR -1
 
 /* Device */
-#define DRIVER_NAME "sui_driver"
+#define CLASS_NAME  "suiclass"
+#define DRIVER_NAME "suidriver"
+#define DEVICE_NAME "suidev"
