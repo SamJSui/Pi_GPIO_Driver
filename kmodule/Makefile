@@ -1,6 +1,6 @@
-obj-m += suimodule.o
+obj-m += kmodule.o
 
-suimodule-objs := driver.o
+kmodule-objs := src/driver.o src/fops.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules

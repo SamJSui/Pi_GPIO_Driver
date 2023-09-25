@@ -1,6 +1,6 @@
 /**
  * @file driver.h
- * @author Sam Sui
+ * @author Sam Sui (samuelsui2002@gmail.com)
  * @brief Header file of driver code for the suimodule Linux kernel module 
  * @version 0.1
  * @date 2023-09-15
@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef SUIMODULE_DRIVER_H
-#define SUIMODULE_DRIVER_H
+#ifndef SUI_DRIVER_H
+#define SUI_DRIVER_H
 
 #include "dev.h"
 #include "fops.h"
@@ -26,12 +26,12 @@
  * 
  * @return int 
  */
-static int  __init suimodule_init(void);
+static int  __init sui_driver_init(void);
 
 /**
  * @brief Destructor to de-allocate resources
  * 
  */
-static void __exit suimodule_exit(void);
+static void __exit sui_driver_exit(void);
 
-#endif // SUIMODULE_DRIVER_H
+#endif // SUI_DRIVER_H

@@ -1,6 +1,6 @@
 /**
  * @file dev.h
- * @author Sam Sui
+ * @author Sam Sui (samuelsui2002@gmail.com)
  * @brief Header file of device variables for registration
  * @version 0.1
  * @date 2023-09-15
@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef SUIMODULE_DEV_H
-#define SUIMODULE_DEV_H
+#ifndef _SUI_DEV_H
+#define _SUI_DEV_H
 
 #include <linux/cdev.h>
 #include <linux/device.h>
@@ -19,4 +19,4 @@ static dev_t dev;
 static struct class *dev_class;
 static struct cdev cdev;
 
-#endif // SUIMODULE_DEV_H
+#endif // _SUI_DEV_H

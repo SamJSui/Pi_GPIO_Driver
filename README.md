@@ -104,7 +104,7 @@ Kernel compilation
 ## Usage
 
 Module insertion
-- `sudo insmod suimodule.ko`
+- `sudo insmod kmodule.ko`
 Check kernel log buffer
 - `dmesg`
 ```
@@ -163,7 +163,7 @@ Run the executable
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] ProcFS
+- [ ] GPIO
 - [ ] Interrupt Handling
 - [ ] Workqueue
 
