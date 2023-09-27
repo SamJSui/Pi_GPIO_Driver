@@ -1,6 +1,6 @@
 /**
  * @file atomic.h
- * @author Sam Sui (samuelsui2002@gmail.com)
+ * @author Sam Sui (ssui at vols dot utk dot edu)
  * @brief Header file to handle concurrent operations on the same file
  * @version 0.1
  * @date 2023-09-16

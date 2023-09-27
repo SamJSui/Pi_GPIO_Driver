@@ -1,6 +1,6 @@
 /**
  * @file fops.h
- * @author Sam Sui (samuelsui2002@gmail.com)
+ * @author Sam Sui (ssui at vols dot utk dot edu)
  * @brief Header file for file_operations struct implementation
  * @version 0.1
  * @date 2023-09-15

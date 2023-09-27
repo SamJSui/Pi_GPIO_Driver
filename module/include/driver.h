@@ -1,6 +1,6 @@
 /**
  * @file driver.h
- * @author Sam Sui (samuelsui2002@gmail.com)
+ * @author Sam Sui (ssui at vols dot utk dot edu)
  * @brief Header file of driver code for the suimodule Linux kernel module 
  * @version 0.1
  * @date 2023-09-15
@@ -15,6 +15,7 @@
 #include "dev.h"
 #include "fops.h"
 #include "macros.h"
+#include "param.h"
 
 #include <linux/init.h>
 #include <linux/kernel.h>
