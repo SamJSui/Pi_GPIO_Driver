@@ -13,8 +13,8 @@
 
 atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);
 
-size_t buffer_size = 256;
-char kernel_buffer[256];
+size_t buffer_size = 20;
+char kernel_buffer[20];
 
 struct file_operations fops = {
     .owner      =   THIS_MODULE,

@@ -16,15 +16,27 @@
 #include <linux/moduleparam.h>
 
 /**
- * @brief Number of values in the pins array
- * Unintuitive naming for command line flag
+ * @brief Number of values in the GPIO pins array which will read in
+ * 
  */
-extern int num_pins;
+extern int num_pins_in;
 
 /**
- * @brief Integer array to hold which GPIO pins to request
- * Unintuitive naming for command line flag
+ * @brief Number of values in the GPIO pins array which will read out
+ * 
  */
-extern int p[28];
+extern int num_pins_out;
+
+/**
+ * @brief Integer array to hold which GPIO pins to request input
+ *
+ */
+extern int in[28];
+
+/**
+ * @brief Integer array to hold which GPIO pins to request output
+ * 
+ */
+extern int out[28];
 
 #endif // _SUI_PARAM_H

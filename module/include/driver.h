@@ -14,6 +14,7 @@
 
 #include "dev.h"
 #include "fops.h"
+#include "gpio.h"
 #include "macros.h"
 #include "param.h"
 

@@ -13,6 +13,7 @@
 #define _SUI_FOPS_H
 
 #include "atomic.h"
+#include "gpio.h"
 #include "macros.h"
 
 #include <linux/fs.h>
@@ -21,7 +22,7 @@
 #include <linux/uaccess.h>
 
 extern size_t buffer_size;
-extern char kernel_buffer[256];
+extern char kernel_buffer[20];
 
 extern struct file_operations fops;
 

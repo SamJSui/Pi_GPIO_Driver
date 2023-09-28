@@ -11,8 +11,18 @@
 
  #include "param.h"
 
-int num_pins = 0;
+int num_pins_in = 1;
+module_param(num_pins_in, int, S_IRUSR | S_IWUSR);
+MODULE_PARM_DESC(in, "Number of input pins to request");
 
-int p[28] = {8};
-module_param_array(p, int, NULL, 0);
-MODULE_PARM_DESC(p, "Array of integers corresponding to which GPIO pins to request access to");
+int num_pins_out = 1;
+module_param(num_pins_out, int, S_IRUSR | S_IWUSR);
+MODULE_PARM_DESC(in, "Number of output pins to request");
+
+int in[28] = {2};
+module_param_array(in, int, NULL, 0);
+MODULE_PARM_DESC(in, "Array of integers corresponding to which input pins to request access to");
+
+int out[28] = {3};
+module_param_array(out, int, NULL, 0);
+MODULE_PARM_DESC(out, "Array of integers corresponding to which output pins to request access to");
