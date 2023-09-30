@@ -12,7 +12,6 @@
 #include "driver.h"
 
 static int __init sui_driver_init(void) {
-    int i, j;
 
     /* Allocate device major number */
     if ((alloc_chrdev_region(&dev, 0, 1, DRIVER_NAME)) < 0) {
@@ -48,65 +47,32 @@ static int __init sui_driver_init(void) {
         goto error_device;
     }
 
-    /* Count valid elements of module param array in */
-    i = num_pins_in;
-
-    /* Count valid elements of module param array in */
-    j = num_pins_out;
-
-    /* Pretty prints which pins were read by the module parameters */
-    pr_info("sui_gpio: %d pins in: ", num_pins_in);
-    for (i = 0; i < num_pins_in; i++) {
-
-        if (gpio_is_valid(in[i]) == false) {
-            pr_err("GPIO %d is not valid\n", in[i]);
-            goto error_gpio; 
-        }
-        sprintf(kernel_buffer, "GPIO_%d", in[i]);
-        if(gpio_request(in[i], kernel_buffer) < 0){
-            pr_err("ERROR: GPIO %d request\n", in[i]);
-            goto error_gpio;
-        }
-        gpio_direction_output(in[i], 0);
-        gpio_export(in[i], false);
-        printk(KERN_CONT "%d ", in[i]);
-
+    /* GPIO Allocation */
+    if (gpio_is_valid(pin) == false) {
+        pr_err("sui_gpio: GPIO %d is not valid\n", pin);
+        goto error_device;
     }
-    printk(KERN_CONT "\n");
 
-    pr_info("sui_gpio: %d pins out: ", num_pins_out);
-    for (j = 0; j < num_pins_out; j++) {
+    /* GPIO pin name */
+    sprintf(kernel_buffer, "GPIO_%d", pin % 28); // Prevent buffer overflow
 
-        if (gpio_is_valid(out[j]) == false) {
-            pr_err("GPIO %d is not valid\n", out[j]);
-            goto error_gpio; 
-        }
-
-        sprintf(kernel_buffer, "GPIO_%d", out[j]);
-        
-        if(gpio_request(out[j], kernel_buffer) < 0){
-            pr_err("ERROR: GPIO %d request\n", out[j]);
-            goto error_gpio;
-        }
-
-        gpio_direction_input(out[j]);
-        gpio_export(out[j], false);
-        printk(KERN_CONT "%d ", out[j]);
+    if(gpio_request(pin, kernel_buffer) < 0){
+        pr_err("sui_gpio: GPIO %d request failed\n", pin);
+        goto error_gpio;
     }
-    printk(KERN_CONT "\n");
 
+    pr_info("sui_gpio: GPIO pin %d is now allocated", pin);
+
+    gpio_direction_output(pin, 0);
+    gpio_export(pin, false);
+    
     /* Greaaat successs :) */
     pr_info("sui_gpio: module successfully loaded\n");
     return SUCCESS;
 
     /* Error labels */
     error_gpio:
-        for (; i < num_pins_in; i++) {
-            gpio_free(in[i]);
-        }
-        for (; j < num_pins_out; j++) {
-            gpio_free(out[j]);
-        }
+        gpio_free(pin);
     error_device:
         class_destroy(dev_class);
     error_class:
@@ -116,6 +82,8 @@ static int __init sui_driver_init(void) {
 }
 
 static void __exit sui_driver_exit(void) {
+    gpio_unexport(pin);
+    gpio_free(pin);
     device_destroy(dev_class, dev);
     class_destroy(dev_class);
     cdev_del(&cdev);

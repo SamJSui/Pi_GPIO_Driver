@@ -25,13 +25,18 @@ struct file_operations fops = {
 };
 
 ssize_t device_read(struct file *file, char *user_buffer, size_t len, loff_t *offs) {
-    int bytes_read, not_copied;
-
-    /* Buffer overflow check */
-    bytes_read = min(len, buffer_size);
+    int not_copied, bytes_read;
+    uint8_t pin_state;
 
     /* Read bytes from kernel_buffer to user_buffer */
-    if ((not_copied = copy_to_user(user_buffer, kernel_buffer, bytes_read)) != 0) {
+    bytes_read = min(len, buffer_size);
+
+    pin_state = gpio_get_value(pin);
+
+    sprintf(kernel_buffer, "%d", (int)pin_state);
+
+    pr_info("sui_gpio: device read %s\n", kernel_buffer);
+    if ((not_copied = copy_to_user(user_buffer, kernel_buffer, buffer_size)) != 0) {
         pr_warn("sui_gpio: %d bytes not read\n", not_copied);
     }
 
@@ -39,17 +44,30 @@ ssize_t device_read(struct file *file, char *user_buffer, size_t len, loff_t *of
 }
 
 ssize_t device_write(struct file *file, const char *user_buffer, size_t len, loff_t *offs) {
-    int bytes_read, not_copied;
+    int not_copied;
 
-    /* Buffer overflow check */
-    bytes_read = min(len, buffer_size);
+    /* Clear the buffer */
+    memset(kernel_buffer, '\0', buffer_size);
 
     /* Read bytes from kernel_buffer to user_buffer */
-    if ((not_copied = copy_from_user(kernel_buffer, user_buffer, bytes_read)) != 0) {
+    if ((not_copied = copy_from_user(kernel_buffer, user_buffer, len)) > 0) {
         pr_warn("sui_gpio: %d bytes not read\n", not_copied);
     }
 
-    return bytes_read;
+    /* Set GPIO Pin */
+    if (kernel_buffer[0] == '1') {
+        gpio_set_value(pin, 1);
+    }
+    else if (kernel_buffer[0] == '0') {
+        gpio_set_value(pin, 0);
+    }
+    else {
+        pr_err("sui_gpio: unknown device file write value - provide GPIO with 1/0\n");
+    }
+
+    pr_info("sui_gpio: device write %s", kernel_buffer);
+
+    return len;
 }
 
 int device_open(struct inode *device_file, struct file *instance) {

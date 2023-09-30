@@ -7,16 +7,14 @@ int main() {
     
     /* Declare variables */
     int fd;
-    char buffer[256];
+    char on_state;
 
     /* Open file descriptor to device file */
-    fd = open("/dev/suidev", O_RDONLY);
+    fd = open("/dev/sui_gpio", O_WRONLY);
     
-    /* Copy 256 bytes into buffer */
-    read(fd, buffer, 256);
-
-    /* Print buffer */
-    printf("%s\n", buffer);
+    /* Copy on value into buffer */
+    on_state = '1';
+    write(fd, &on_state, sizeof(on_state));
     
     close(fd);
     return 0;

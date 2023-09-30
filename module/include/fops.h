@@ -15,6 +15,7 @@
 #include "atomic.h"
 #include "gpio.h"
 #include "macros.h"
+#include "param.h"
 
 #include <linux/fs.h>
 #include <linux/ioctl.h>

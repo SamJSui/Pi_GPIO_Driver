@@ -16,27 +16,9 @@
 #include <linux/moduleparam.h>
 
 /**
- * @brief Number of values in the GPIO pins array which will read in
+ * @brief Integer corresponding to which GPIO pin to request
  * 
  */
-extern int num_pins_in;
-
-/**
- * @brief Number of values in the GPIO pins array which will read out
- * 
- */
-extern int num_pins_out;
-
-/**
- * @brief Integer array to hold which GPIO pins to request input
- *
- */
-extern int in[28];
-
-/**
- * @brief Integer array to hold which GPIO pins to request output
- * 
- */
-extern int out[28];
+extern int pin;
 
 #endif // _SUI_PARAM_H
